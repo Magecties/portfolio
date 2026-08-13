@@ -41,4 +41,46 @@ export const SCENARIOS = [
       },
     ],
   },
+  {
+    name: "Formular → CRM-opgave",
+    trigger: "Ny kontakt i hjemmesideformular",
+    stack: "Make · Webhook · GPT · HubSpot · Slack",
+    modules: [
+      {
+        label: "Webhook",
+        sub: "Fang formular",
+        tint: "#3C7EE8",
+        does: "Modtager navn, mail, emne og besked fra kontaktformularen.",
+        out: "Lead #2841 · 5 felter",
+      },
+      {
+        label: "GPT",
+        sub: "Klassificer",
+        tint: "#7B62C4",
+        does: "Vurderer henvendelsen og foreslår prioritet samt kategori.",
+        out: "Kategori: Webshop · Prioritet: Høj",
+      },
+      {
+        label: "HubSpot",
+        sub: "Find/Opret kontakt",
+        tint: "#E67A45",
+        does: "Matcher på e-mail og opretter kontakt hvis den ikke findes.",
+        out: "Kontakt opdateret",
+      },
+      {
+        label: "HubSpot",
+        sub: "Opret opgave",
+        tint: "#E67A45",
+        does: "Laver opgave med deadline og ejer baseret på kategori.",
+        out: "Task #T-9021",
+      },
+      {
+        label: "Slack",
+        sub: "Send besked",
+        tint: "#4A154B",
+        does: "Poster et resume i #sales med link til kontakt og opgave.",
+        out: "Notificeret team",
+      },
+    ],
+  },
 ];
