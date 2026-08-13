@@ -4,11 +4,13 @@ import Room from "../components/Room";
 import useViewport from "../hooks/useViewport";
 import { HAIR, clamp } from "../theme";
 import { GARMENTS } from "../data/garments";
+import { SITES } from "../data/sites";
+import { SCENARIOS } from "../data/scenarios";
 
 const HERO = {
-  name: "Magnus",
+  name: "Magnus Bach Billeskov Brask",
   line: "Jeg elsker at lave ting",
-  mail: "hej@vintacool.dk",
+  mail: "magnusbbb@hotmail.com",
 };
 
 const SECTIONS = [
@@ -40,6 +42,7 @@ function Piece({ kind, w }) {
   };
 
   if (kind === "browser") {
+    const site = SITES[0];
     return (
       <div style={shell}>
         <div
@@ -56,27 +59,22 @@ function Piece({ kind, w }) {
           {[0, 1, 2].map((d) => (
             <span key={d} style={{ width: w * 0.018, height: w * 0.018, borderRadius: "50%", background: "#DCDCD7" }} />
           ))}
+          <span className="label" style={{ marginLeft: w * 0.03, fontSize: w * 0.02, letterSpacing: "0.11em" }}>
+            {site.url}
+          </span>
         </div>
-        <div style={{ padding: w * 0.055, display: "flex", flexDirection: "column", gap: w * 0.022 }}>
-          <div style={{ height: w * 0.085, width: "60%", background: "#2F7A5B", borderRadius: 2 }} />
-          <div style={{ height: w * 0.018, width: "82%", background: "#EAEAE6", borderRadius: 3 }} />
-          <div style={{ height: w * 0.018, width: "66%", background: "#EAEAE6", borderRadius: 3 }} />
-          <div style={{ display: "flex", gap: w * 0.025, marginTop: w * 0.025 }}>
-            {[0, 1, 2].map((k) => (
-              <div key={k} style={{ flex: 1, height: w * 0.15, background: k === 2 ? "#2F7A5B1A" : "#F5F5F2", borderRadius: 3 }} />
-            ))}
-          </div>
+        <div style={{ height: w * 0.66 - w * 0.072, overflow: "hidden" }}>
+          <img src={site.shot} alt={site.name} draggable="false" style={{ width: "100%", display: "block" }} />
         </div>
       </div>
     );
   }
 
-  const nodes = [
-    { x: 16, y: 62, c: "#2B7CD3" },
-    { x: 38, y: 34, c: "#5E9A46" },
-    { x: 62, y: 62, c: "#7B62C4" },
-    { x: 84, y: 34, c: "#2B5DC0" },
-  ];
+  const nodes = SCENARIOS[0].modules.map((m, idx, arr) => ({
+    x: (100 / (arr.length + 1)) * (idx + 1),
+    y: idx % 2 === 0 ? 61 : 35,
+    c: m.tint,
+  }));
 
   return (
     <div style={{ ...shell, display: "grid", placeItems: "center" }}>
