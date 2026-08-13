@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 72" role="img" aria-labelledby="title">
+  <title id="title">Vintacool</title>
+  <rect width="260" height="72" rx="8" fill="#131313" />
+  <text
+    x="130"
+    y="46"
+    text-anchor="middle"
+    font-family="Montserrat, Helvetica Neue, Arial, sans-serif"
+    font-size="34"
+    font-weight="900"
+    font-style="italic"
+    letter-spacing="-1"
+    fill="#FFFFFF"
+  >
+    VINTACOOL
+  </text>
+</svg>
