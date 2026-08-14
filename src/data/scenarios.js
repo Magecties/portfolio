@@ -3,6 +3,7 @@ export const SCENARIOS = [
     name: "Diktat → dokument",
     trigger: "Ny lydfil i /Diktater",
     stack: "Make · Whisper · GPT · Word",
+    note: "Bygget fordi det tog for lang tid at renskrive møder i hånden. Nu lægger man en lydfil i en mappe og får et færdigt notat retur i samme opsætning hver gang.",
     modules: [
       {
         label: "OneDrive",
@@ -45,6 +46,7 @@ export const SCENARIOS = [
     name: "Formular → CRM-opgave",
     trigger: "Ny kontakt i hjemmesideformular",
     stack: "Make · Webhook · GPT · HubSpot · Slack",
+    note: "Tidligere blev henvendelser fanget manuelt i en mailboks. Scenariet sorterer dem, opretter kontakt og opgave i HubSpot og siger til i Slack, så ingen leads bliver glemt.",
     modules: [
       {
         label: "Webhook",

@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Room from "../components/Room";
 import Hanger from "../components/Hanger";
+import Note from "../components/Note";
 import Dots from "../components/Dots";
 import Arrows from "../components/Arrows";
 import useViewport from "../hooks/useViewport";
@@ -15,13 +17,16 @@ export default function Vintacool() {
   const navigate = useNavigate();
   const ROLES = ["Grafik", "Webshop", "Foto", "Drift"];
   const vp = useViewport();
+  const [capH, setCapH] = useState(140);
   const { W, SPACING, BAR_Y, FLOOR_Y, geom, bind, dragging, idx, step, goTo, PERSP } = useRail({
     count: GARMENTS.length,
     vp,
+    capH,
   });
 
   return (
     <Room
+      onCaptionHeight={setCapH}
       topLeft={
         <button
           onClick={() => navigate("/")}
@@ -41,9 +46,12 @@ export default function Vintacool() {
         </span>
       }
       caption={
-        <h1 className="brand" style={{ fontSize: "clamp(1.4rem, 4.2vw, 3rem)", margin: 0, lineHeight: 1.02 }}>
-          {GARMENTS[idx].name}
-        </h1>
+        <>
+          <h1 className="brand" style={{ fontSize: "clamp(1.4rem, 4.2vw, 3rem)", margin: 0, lineHeight: 1.02 }}>
+            {GARMENTS[idx].name}
+          </h1>
+          <Note>{GARMENTS[idx].note}</Note>
+        </>
       }
       footLeft={<span className="credits">{ROLES.join(" · ")}</span>}
       footCenter={<Dots count={GARMENTS.length} active={idx} onPick={goTo} labels={GARMENTS.map((g) => g.name)} />}

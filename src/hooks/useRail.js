@@ -5,12 +5,22 @@ const RATIO = 613 / 660;
 const MAXROT = 44;
 const PERSP = 2200;
 
-export default function useRail({ count, vp }) {
-  const W = clamp(Math.min(vp.w * 0.46, vp.h * 0.74), 240, 700);
+// Vertical chrome the rail has to stay clear of: the logo row up top
+// (28px offset + 46px logo, plus breathing room) and the caption + foot below.
+const HEAD = 104;
+const CAPTION_BOTTOM = 78;
+const GAP = 20;
+// A hanger plus its garment measures this tall relative to the garment width.
+const STACK = RATIO + 0.19;
+
+export default function useRail({ count, vp, capH = 140 }) {
+  const band = Math.max(160, vp.h - HEAD - CAPTION_BOTTOM - capH - GAP);
+  const W = clamp(Math.min(vp.w * 0.46, band / STACK), 240, 700);
   const GH = W * RATIO;
   const HOOKH = W * 0.19;
-  const SPACING = W * 0.58;
-  const BAR_Y = Math.max(70, (vp.h - (GH + HOOKH)) * 0.42);
+  // Neighbours foreshorten to ~0.81W on screen, so anything under ~0.84 stacks them.
+  const SPACING = W * 0.84;
+  const BAR_Y = HEAD + Math.max(0, band - W * STACK) * 0.42;
   const FLOOR_Y = BAR_Y + HOOKH + GH + Math.min(46, vp.h * 0.05);
   const maxOffset = (count - 1) * SPACING;
   const ZSTEP = W * 0.5;

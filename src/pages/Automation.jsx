@@ -4,9 +4,18 @@ import Room from "../components/Room";
 import Chevron from "../components/Chevron";
 import Dots from "../components/Dots";
 import Arrows from "../components/Arrows";
+import Note from "../components/Note";
 import useViewport from "../hooks/useViewport";
 import { HAIR, INK, LIVE, MUTE, clamp } from "../theme";
 import { SCENARIOS } from "../data/scenarios";
+
+const HEAD = 76;
+const CAPTION_BOTTOM = 78;
+const GAP = 20;
+// Trigger label, the margin under the graph and the run row.
+const GRAPH_CHROME = 112;
+// Graph height per unit width: the svg body (0.26) plus node labels (2.6 · 0.036R).
+const GRAPH_RATIO = 0.26 + 0.036 * 2.6;
 
 export default function Automation() {
   const vp = useViewport();
@@ -15,6 +24,7 @@ export default function Automation() {
   const [prog, setProg] = useState(-1);
   const [running, setRunning] = useState(false);
   const [picked, setPicked] = useState(null);
+  const [capH, setCapH] = useState(150);
   const raf = useRef(0);
 
   const sc = SCENARIOS[s];
@@ -55,7 +65,10 @@ export default function Automation() {
     setS(clamp(n, 0, SCENARIOS.length - 1));
   };
 
-  const GW = clamp(Math.min(vp.w * 0.74, 980), 300, 980);
+  const band = Math.max(150, vp.h - HEAD - CAPTION_BOTTOM - capH - GAP);
+  const GW = clamp(Math.min(vp.w * 0.74, (band - GRAPH_CHROME) / GRAPH_RATIO), 300, 980);
+  // The free band sits above centre, so nudge the graph into it.
+  const bandOffset = HEAD + band / 2 - vp.h / 2;
   const GH = GW * 0.26;
   const R = Math.max(20, GW * 0.036);
   const pts = sc.modules.map((_, i) => ({
@@ -74,6 +87,7 @@ export default function Automation() {
 
   return (
     <Room
+      onCaptionHeight={setCapH}
       stageProps={{ style: { display: "grid", placeItems: "center" } }}
       topLeft={
         <button className="home" onClick={() => navigate("/")}>
@@ -82,9 +96,12 @@ export default function Automation() {
         </button>
       }
       caption={
-        <h1 className="brand" style={{ fontSize: "clamp(1.4rem, 4.2vw, 3rem)", margin: 0, lineHeight: 1 }}>
-          {sc.name}
-        </h1>
+        <>
+          <h1 className="brand" style={{ fontSize: "clamp(1.4rem, 4.2vw, 3rem)", margin: 0, lineHeight: 1 }}>
+            {sc.name}
+          </h1>
+          <Note>{sc.note}</Note>
+        </>
       }
       footLeft={<span className="credits">{sc.stack}</span>}
       footCenter={<Dots count={SCENARIOS.length} active={s} onPick={go} labels={SCENARIOS.map((x) => x.name)} />}
@@ -97,7 +114,7 @@ export default function Automation() {
         />
       }
     >
-      <div style={{ width: GW, marginTop: -vp.h * 0.06 }}>
+      <div style={{ width: GW, marginTop: bandOffset }}>
         <div className="label" style={{ textAlign: "center", marginBottom: 10 }}>
           {sc.trigger}
         </div>

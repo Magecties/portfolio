@@ -5,9 +5,22 @@ import Chevron from "../components/Chevron";
 import Dots from "../components/Dots";
 import Arrows from "../components/Arrows";
 import MockPage from "../components/MockPage";
+import Note from "../components/Note";
 import useViewport from "../hooks/useViewport";
 import { HAIR, INK, clamp, lerp } from "../theme";
 import { SITES } from "../data/sites";
+
+// Vertical chrome around the browser mock: the back button up top, and the
+// caption (bottom-anchored, measured) plus a gap below.
+const HEAD = 76;
+const CAPTION_BOTTOM = 78;
+const GAP = 20;
+// Scroll bar, ground shadow and their margins, on top of the mock itself.
+const SHELL_CHROME = 71;
+// Widest mock that still fits `band`. Its height is SH (0.62·SW) + the title bar
+// + SHELL_CHROME, and the title bar is max(22, 0.042·SW) — so bound both branches.
+const fitWidth = (band) =>
+  Math.min((band - SHELL_CHROME) / 0.662, (band - SHELL_CHROME - 22) / 0.62);
 
 export default function Web() {
   const vp = useViewport();
@@ -15,16 +28,20 @@ export default function Web() {
   const [i, setI] = useState(0);
   const [scroll, setScroll] = useState(0);
   const [render, setRender] = useState(0);
+  const [capH, setCapH] = useState(150);
   const smooth = useRef(0);
   const tilt = useRef(null);
   const drag = useRef(null);
   const lock = useRef(false);
 
   const site = SITES[i];
-  const SW = clamp(Math.min(vp.w * 0.56, vp.h * 1.02), 300, 820);
+  const band = Math.max(150, vp.h - HEAD - CAPTION_BOTTOM - capH - GAP);
+  const SW = clamp(Math.min(vp.w * 0.56, fitWidth(band)), 300, 820);
   const SH = SW * 0.62;
   const CHROME = Math.max(22, SW * 0.042);
   const PAGE_H = SH * 3.1;
+  // The free band sits above centre, so nudge the mock into it.
+  const bandOffset = HEAD + band / 2 - vp.h / 2;
 
   useEffect(() => {
     let raf;
@@ -91,6 +108,7 @@ export default function Web() {
 
   return (
     <Room
+      onCaptionHeight={setCapH}
       stageProps={stageProps}
       topLeft={
         <button className="home" onClick={() => navigate("/")}>
@@ -108,6 +126,7 @@ export default function Web() {
           <h1 className="brand" style={{ fontSize: "clamp(1.4rem, 4.2vw, 3rem)", margin: 0, lineHeight: 1 }}>
             {site.name}
           </h1>
+          <Note>{site.note}</Note>
           <div style={{ marginTop: 12 }}>
             <a className="link" href={`https://${site.url}`} target="_blank" rel="noreferrer">
               Besøg siden
@@ -126,7 +145,7 @@ export default function Web() {
         />
       }
     >
-      <div style={{ marginTop: -vp.h * 0.04 }}>
+      <div style={{ marginTop: bandOffset }}>
         <div ref={tilt} style={{ transition: "transform 480ms cubic-bezier(0.22,1,0.36,1)" }}>
           <div
             style={{
