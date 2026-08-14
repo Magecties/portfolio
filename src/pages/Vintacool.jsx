@@ -28,7 +28,11 @@ export default function Vintacool() {
           aria-label="Til forsiden"
           style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}
         >
-          <img src="/vintacool-logo.svg" alt="Vintacool" style={{ height: 46, display: "block" }} />
+          <img
+            src={`${import.meta.env.BASE_URL}vintacool-logo.svg`}
+            alt="Vintacool"
+            style={{ height: 46, display: "block" }}
+          />
         </button>
       }
       topRight={
