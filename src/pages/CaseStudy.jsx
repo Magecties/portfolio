@@ -1,16 +1,35 @@
 import { useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import CaseShell from "../components/CaseShell";
+import { StoryIntro, StorySection } from "../components/StoryCase";
 import usePageFocus from "../hooks/usePageFocus";
 import { CASES, findCase } from "../data/cases";
 
 const OWNER = "Magnus Bach Billeskov Brask";
 const pad = (n) => String(n).padStart(2, "0");
 
+// Ét billede, eller et før/efter-par (billede eller kode) med fælles billedtekst.
 function Figure({ image }) {
   return (
     <figure className="case-figure" style={image.maxWidth ? { maxWidth: image.maxWidth } : undefined}>
-      <img src={image.src} alt={image.alt} loading="lazy" decoding="async" />
+      {image.compare ? (
+        <div className="case-compare">
+          {image.compare.map((m) => (
+            <div key={m.label} className="case-compare-cell">
+              <p className="case-eyebrow">{m.label}</p>
+              {m.code ? (
+                <pre className="case-code" tabIndex={0}>
+                  <code>{m.code}</code>
+                </pre>
+              ) : (
+                <img src={m.src} alt={m.alt} loading="lazy" decoding="async" />
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <img src={image.src} alt={image.alt} loading="lazy" decoding="async" />
+      )}
       {image.caption && <figcaption>{image.caption}</figcaption>}
     </figure>
   );
@@ -20,7 +39,23 @@ const STATUS = {
   done: { mark: "✓", text: "Gennemført" },
   partial: { mark: "◐", text: "Delvist" },
   skipped: { mark: "–", text: "Fravalgt" },
+  high: { mark: "●", text: "Høj" },
+  medium: { mark: "◐", text: "Mellem" },
+  met: { mark: "✓", text: "Opfyldt" },
+  fix: { mark: "!", text: "Skal forbedres" },
+  na: { mark: "–", text: "Ikke vurderet" },
 };
+
+const ITEM_LABELS = ["Problem", "Løsning", "Verifikation"];
+
+// Billeder og kode til et forbedringskort. Enten en eksplicit media-liste eller før/efter.
+const mediaFor = (item) =>
+  item.media ??
+  [
+    item.before && { label: "Før", ...item.before },
+    item.code && { label: "Efter", code: item.code },
+    item.after && { label: "Efter", ...item.after },
+  ].filter(Boolean);
 
 // Prioriteret plan: grupper af forbedringer med status, nummereret fortløbende.
 function Plan({ groups }) {
@@ -31,16 +66,18 @@ function Plan({ groups }) {
       {groups.map((g, k) => (
         <div key={g.group} className="case-plan-group">
           <h3 className="case-eyebrow">{g.group}</h3>
-          <ol start={starts[k]}>
+          <ol start={starts[k]} data-columns={g.columns || undefined}>
             {g.items.map((it, j) => (
               <li key={it.label} data-status={it.status}>
                 <span className="case-plan-n" aria-hidden="true">
                   {pad(starts[k] + j)}
                 </span>
                 <span className="case-plan-label">{it.label}</span>
-                <span className="case-plan-status">
-                  <span aria-hidden="true">{STATUS[it.status].mark}</span> {STATUS[it.status].text}
-                </span>
+                {it.status && (
+                  <span className="case-plan-status">
+                    <span aria-hidden="true">{STATUS[it.status].mark}</span> {STATUS[it.status].text}
+                  </span>
+                )}
               </li>
             ))}
           </ol>
@@ -51,7 +88,9 @@ function Plan({ groups }) {
 }
 
 // Forbedringskort: problem → løsning → verifikation med før/efter-evidens.
-function Improvement({ item, index }) {
+function Improvement({ item, index, labels = ITEM_LABELS }) {
+  const media = mediaFor(item);
+  const text = [item.problem, item.fix, item.check];
   return (
     <article className="case-item" aria-labelledby={`item-${index}`}>
       <header className="case-item-head">
@@ -64,39 +103,32 @@ function Improvement({ item, index }) {
         {item.branch && <code className="case-branch">{item.branch}</code>}
       </header>
       <dl className="case-item-text">
-        <div>
-          <dt>Problem</dt>
-          <dd>{item.problem}</dd>
-        </div>
-        <div>
-          <dt>Løsning</dt>
-          <dd>{item.fix}</dd>
-        </div>
-        <div>
-          <dt>Verifikation</dt>
-          <dd>{item.check}</dd>
-        </div>
+        {text.map(
+          (t, k) =>
+            t && (
+              <div key={labels[k]}>
+                <dt>{labels[k]}</dt>
+                <dd>{t}</dd>
+              </div>
+            ),
+        )}
       </dl>
-      <div className="case-compare" data-stack={item.stack || undefined}>
-        {item.before && (
-          <figure>
-            <figcaption className="case-eyebrow">Før</figcaption>
-            <img src={item.before.src} alt={item.before.alt} loading="lazy" decoding="async" />
-          </figure>
-        )}
-        {(item.code || item.after) && (
-          <figure>
-            <figcaption className="case-eyebrow">Efter</figcaption>
-            {item.code ? (
-              <pre className="case-code" tabIndex={0}>
-                <code>{item.code}</code>
-              </pre>
-            ) : (
-              <img src={item.after.src} alt={item.after.alt} loading="lazy" decoding="async" />
-            )}
-          </figure>
-        )}
-      </div>
+      {media.length > 0 && (
+        <div className="case-compare" data-stack={item.stack || undefined}>
+          {media.map((m) => (
+            <figure key={m.src ?? m.code} style={m.maxWidth ? { maxWidth: m.maxWidth } : undefined}>
+              <figcaption className="case-eyebrow">{m.label}</figcaption>
+              {m.code ? (
+                <pre className="case-code" tabIndex={0}>
+                  <code>{m.code}</code>
+                </pre>
+              ) : (
+                <img src={m.src} alt={m.alt} loading="lazy" decoding="async" data-light={m.light || undefined} />
+              )}
+            </figure>
+          ))}
+        </div>
+      )}
     </article>
   );
 }
@@ -181,6 +213,17 @@ export default function CaseStudy() {
 
   const imagesAfter = (id) => item.images.filter((img) => img.after === id);
 
+  if (item.layout === "story") {
+    return (
+      <CaseShell right={`Case ${pad(item.number)} / ${pad(CASES.length)}`} footer={<Pager index={index} />}>
+        <StoryIntro item={item} headingRef={heading} />
+        {item.sections.map((s, k) => (
+          <StorySection key={s.id} section={s} n={k + 1} />
+        ))}
+      </CaseShell>
+    );
+  }
+
   return (
     <CaseShell right={`Case ${pad(item.number)} / ${pad(CASES.length)}`} footer={<Pager index={index} />}>
       <div className="case-hero">
@@ -223,10 +266,19 @@ export default function CaseStudy() {
                 {p}
               </p>
             ))}
+            {s.bullets && (
+              <ul className="case-bullets">
+                {s.bullets.map((b) => (
+                  <li key={b.lead}>
+                    <strong>{b.lead}:</strong> {b.text}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           {s.plan && <Plan groups={s.plan} />}
           {s.items?.map((it, j) => (
-            <Improvement key={it.title} item={it} index={j} />
+            <Improvement key={it.title} item={it} index={j} labels={s.itemLabels} />
           ))}
           {imagesAfter(s.id).map((img) => (
             <Figure key={img.src} image={img} />
@@ -234,26 +286,6 @@ export default function CaseStudy() {
         </section>
       ))}
 
-      {(item.sources?.length > 0 || item.declaration) && (
-        <aside className="case-notes" aria-label="Kilder og deklaration">
-          {item.sources?.length > 0 && (
-            <>
-              <h2 className="case-eyebrow">Kilder</h2>
-              <ul>
-                {item.sources.map((s) => (
-                  <li key={s}>{s}</li>
-                ))}
-              </ul>
-            </>
-          )}
-          {item.declaration && (
-            <>
-              <h2 className="case-eyebrow">Deklaration af generativ AI</h2>
-              <p>{item.declaration}</p>
-            </>
-          )}
-        </aside>
-      )}
     </CaseShell>
   );
 }

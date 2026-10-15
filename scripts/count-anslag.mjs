@@ -21,9 +21,10 @@ for (const c of CASES) {
   const paragraphs = [
     c.lead,
     ...c.sections.flatMap((s) => s.body),
+    ...c.sections.flatMap((s) => (s.bullets ?? []).map((b) => `${b.lead}: ${b.text}`)),
     ...c.sections.flatMap((s) => (s.plan ?? []).flatMap((g) => g.items.map((it) => it.label))),
     ...c.sections.flatMap((s) => (s.items ?? []).flatMap((it) => [it.problem, it.fix, it.check])),
-  ];
+  ].filter(Boolean);
   const body = paragraphs.reduce((sum, p) => sum + len(p), 0);
   const extra =
     len(c.title) +
