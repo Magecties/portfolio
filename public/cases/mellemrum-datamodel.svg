@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" font-family="Montserrat, Helvetica, Arial, sans-serif">
+  <title>Datamodellen før og efter</title>
+  <desc>Før: events og registrations uden relationer, hvor venue- og eventoplysninger er kopieret som tekst. Efter: venues, events og registrations forbundet med fremmednøgler.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#C9762B"/>
+    </marker>
+    <style>
+      .h { font-size: 18px; font-weight: 700; fill: #131313; }
+      .r { font-size: 15px; fill: #131313; }
+      .dup { font-size: 15px; fill: #A35A17; }
+      .k { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; fill: #8C8C86; }
+      .fk { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; fill: #C9762B; }
+      .lbl { font-size: 13px; font-weight: 700; letter-spacing: 0.2em; fill: #8C8C86; }
+      .cap { font-size: 15px; fill: #8C8C86; }
+      .tbl { fill: #fff; stroke: #D6D5D0; stroke-width: 1.5; }
+      .head { fill: #F4F4F1; }
+      .hl { fill: #FBEEE2; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="560" fill="#FFFFFF"/>
+  <line x1="600" y1="40" x2="600" y2="520" stroke="#E4E3DE" stroke-width="2"/>
+  <text class="lbl" x="40" y="58">FØR</text>
+  <text class="lbl" x="640" y="58">EFTER</text>
+
+  <!-- FØR: events -->
+  <rect class="tbl" x="40" y="90" width="240" height="360" rx="6"/>
+  <path class="head" d="M46,90 h228 a6,6 0 0 1 6,6 v34 h-240 v-34 a6,6 0 0 1 6,-6 z"/>
+  <text class="h" x="56" y="117">events</text>
+  <text class="r" x="56" y="151">id</text><text class="k" x="244" y="151">PK</text>
+  <text class="r" x="56" y="183">title</text>
+  <text class="r" x="56" y="215">date</text>
+  <rect class="hl" x="41" y="226" width="238" height="160"/>
+  <text class="dup" x="56" y="247">venueName</text>
+  <text class="dup" x="56" y="279">venueAddress</text>
+  <text class="dup" x="56" y="311">venuePostalCode</text>
+  <text class="dup" x="56" y="343">venueCity</text>
+  <text class="dup" x="56" y="375">venueWebsite</text>
+  <text class="r" x="56" y="407">image</text>
+  <text class="r" x="56" y="439">price</text>
+
+  <!-- FØR: registrations -->
+  <rect class="tbl" x="320" y="90" width="240" height="264" rx="6"/>
+  <path class="head" d="M326,90 h228 a6,6 0 0 1 6,6 v34 h-240 v-34 a6,6 0 0 1 6,-6 z"/>
+  <text class="h" x="336" y="117">registrations</text>
+  <text class="r" x="336" y="151">id</text><text class="k" x="524" y="151">PK</text>
+  <text class="r" x="336" y="183">name</text>
+  <text class="r" x="336" y="215">email</text>
+  <text class="r" x="336" y="247">status</text>
+  <rect class="hl" x="321" y="258" width="238" height="95"/>
+  <text class="dup" x="336" y="279">eventTitle</text>
+  <text class="dup" x="336" y="311">eventDate</text>
+  <text class="dup" x="336" y="343">eventLocation</text>
+
+  <text class="cap" x="40" y="490">Venue og event kopieret som tekst.</text>
+  <text class="cap" x="40" y="512">Ingen relationer mellem tabellerne.</text>
+
+  <!-- EFTER: venues -->
+  <rect class="tbl" x="640" y="90" width="160" height="232" rx="6"/>
+  <path class="head" d="M646,90 h148 a6,6 0 0 1 6,6 v34 h-160 v-34 a6,6 0 0 1 6,-6 z"/>
+  <text class="h" x="654" y="117">venues</text>
+  <text class="r" x="654" y="151">id</text><text class="k" x="770" y="151">PK</text>
+  <text class="r" x="654" y="183">name</text>
+  <text class="r" x="654" y="215">address</text>
+  <text class="r" x="654" y="247">postalCode</text>
+  <text class="r" x="654" y="279">city</text>
+  <text class="r" x="654" y="311">website</text>
+
+  <!-- EFTER: events -->
+  <rect class="tbl" x="820" y="90" width="160" height="264" rx="6"/>
+  <path class="head" d="M826,90 h148 a6,6 0 0 1 6,6 v34 h-160 v-34 a6,6 0 0 1 6,-6 z"/>
+  <text class="h" x="834" y="117">events</text>
+  <text class="r" x="834" y="151">id</text><text class="k" x="950" y="151">PK</text>
+  <text class="r" x="834" y="183">title</text>
+  <text class="r" x="834" y="215">date</text>
+  <rect class="hl" x="821" y="226" width="158" height="32"/>
+  <text class="dup" x="834" y="247">venue_id</text><text class="fk" x="952" y="247">FK</text>
+  <text class="r" x="834" y="279">category</text>
+  <text class="r" x="834" y="311">image</text>
+  <text class="r" x="834" y="343">price</text>
+
+  <!-- EFTER: registrations -->
+  <rect class="tbl" x="1000" y="90" width="160" height="200" rx="6"/>
+  <path class="head" d="M1006,90 h148 a6,6 0 0 1 6,6 v34 h-160 v-34 a6,6 0 0 1 6,-6 z"/>
+  <text class="h" x="1014" y="117">registrations</text>
+  <text class="r" x="1014" y="151">id</text><text class="k" x="1130" y="151">PK</text>
+  <text class="r" x="1014" y="183">name</text>
+  <text class="r" x="1014" y="215">email</text>
+  <text class="r" x="1014" y="247">status</text>
+  <rect class="hl" x="1001" y="258" width="158" height="31"/>
+  <text class="dup" x="1014" y="279">event_id</text><text class="fk" x="1132" y="279">FK</text>
+
+  <!-- Relationer -->
+  <path d="M821,242 H810 V146 H802" fill="none" stroke="#C9762B" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M1001,274 H990 V146 H982" fill="none" stroke="#C9762B" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <text class="cap" x="640" y="490">venues 1–* events 1–* registrations.</text>
+  <text class="cap" x="640" y="512">Et venue rettes ét sted og slår igennem overalt.</text>
+</svg>

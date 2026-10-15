@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Room from "../components/Room";
 import useViewport from "../hooks/useViewport";
 import { HAIR, clamp } from "../theme";
@@ -139,6 +139,12 @@ export default function Landing() {
   return (
     <Room
       stageProps={stageProps}
+      topLeft={
+        // Stop keydown here, so Enter on the link doesn't also trigger the window's open().
+        <Link className="toplink" to="/cases" onKeyDown={(e) => e.stopPropagation()}>
+          Eksamenscases
+        </Link>
+      }
       topRight={
         <a className="link" href={`mailto:${HERO.mail}`}>
           {HERO.mail}
